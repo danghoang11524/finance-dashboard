@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FinTrack – Finance Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.5.0/Recharts.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:        #0C0E14;
+    --surface:   #131620;
+    --surface2:  #1A1E2E;
+    --border:    rgba(255,255,255,0.07);
+    --border2:   rgba(255,255,255,0.12);
+    --text:      #F0F2FF;
+    --muted:     #7B82A3;
+    --accent:    #4F8EF7;
+    --accent2:   #7C5CFC;
+    --green:     #34D399;
+    --red:       #F87171;
+    --amber:     #FBBF24;
+    --sidebar-w: 220px;
+  }
+  html, body, #root { height: 100%; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
+
+  .layout { display: flex; height: 100vh; overflow: hidden; }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: var(--sidebar-w); min-width: var(--sidebar-w);
+    background: var(--surface); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; padding: 24px 0;
+  }
+  .logo { padding: 0 20px 28px; display: flex; align-items: center; gap: 10px; }
+  .logo-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--accent); display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 600; color: #fff;
+  }
+  .logo-text { font-size: 16px; font-weight: 600; letter-spacing: -0.3px; }
+  .logo-text span { color: var(--accent); }
+
+  .nav-label { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: 1.2px; text-transform: uppercase; padding: 0 20px 8px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 20px; cursor: pointer; font-size: 13.5px; font-weight: 400;
+    color: var(--muted); border-left: 2px solid transparent; transition: all 0.15s;
+  }
+  .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+  .nav-item.active { color: var(--text); border-left-color: var(--accent); background: rgba(79,142,247,0.08); font-weight: 500; }
+  .nav-icon { width: 16px; height: 16px; opacity: 0.8; }
+  .nav-spacer { flex: 1; }
+  .nav-user { padding: 16px 20px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--accent2); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #fff; flex-shrink: 0; }
+  .user-name { font-size: 13px; font-weight: 500; }
+  .user-role { font-size: 11px; color: var(--muted); }
+
+  /* MAIN */
+  .main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+  .topbar {
+    padding: 20px 28px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--surface); position: sticky; top: 0; z-index: 10;
+  }
+  .page-title { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .month-select {
+    background: var(--surface2); border: 1px solid var(--border2);
+    color: var(--text); padding: 6px 12px; border-radius: 8px; font-size: 13px; font-family: inherit; cursor: pointer;
+  }
+  .add-btn {
+    background: var(--accent); color: #fff; border: none; padding: 7px 14px;
+    border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .content { padding: 24px 28px; display: flex; flex-direction: column; gap: 24px; }
+
+  /* STAT CARDS */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px 20px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .stat-header { display: flex; align-items: center; justify-content: space-between; }
+  .stat-label { font-size: 12px; color: var(--muted); font-weight: 500; letter-spacing: 0.2px; }
+  .stat-badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+  .badge-green { background: rgba(52,211,153,0.12); color: var(--green); }
+  .badge-red   { background: rgba(248,113,113,0.12); color: var(--red); }
+  .badge-blue  { background: rgba(79,142,247,0.12);  color: var(--accent); }
+  .stat-value { font-size: 26px; font-weight: 600; letter-spacing: -0.5px; font-family: 'DM Mono', monospace; }
+  .stat-sub { font-size: 11.5px; color: var(--muted); }
+
+  /* CHARTS ROW */
+  .charts-row { display: grid; grid-template-columns: 1fr 340px; gap: 16px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px;
+  }
+  .card-title { font-size: 13.5px; font-weight: 600; margin-bottom: 4px; }
+  .card-sub { font-size: 12px; color: var(--muted); margin-bottom: 18px; }
+
+  /* CATEGORY PIE */
+  .pie-legend { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+  .legend-item { display: flex; align-items: center; justify-content: space-between; }
+  .legend-left { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .legend-pct { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+  /* BOTTOM ROW */
+  .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* TRANSACTIONS */
+  .txn-list { display: flex; flex-direction: column; gap: 2px; }
+  .txn-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; border-radius: 8px; transition: background 0.12s; cursor: pointer;
+  }
+  .txn-item:hover { background: rgba(255,255,255,0.04); }
+  .txn-icon {
+    width: 36px; height: 36px; border-radius: 10px; display: flex;
+    align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0;
+  }
+  .txn-info { flex: 1; min-width: 0; }
+  .txn-name { font-size: 13.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .txn-date { font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+  .txn-amount { font-size: 13.5px; font-weight: 600; font-family: 'DM Mono', monospace; white-space: nowrap; }
+
+  /* BUDGET BARS */
+  .budget-list { display: flex; flex-direction: column; gap: 16px; }
+  .budget-item {}
+  .budget-header { display: flex; justify-content: space-between; margin-bottom: 7px; }
+  .budget-name { font-size: 13px; font-weight: 500; }
+  .budget-vals { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .budget-track { height: 6px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+  .budget-fill { height: 100%; border-radius: 99px; transition: width 0.6s ease; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+
+  @media (max-width: 900px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .charts-row { grid-template-columns: 1fr; }
+    .bottom-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const { createElement: h, useState, useEffect } = React;
+const { AreaChart, Area, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } = Recharts;
+
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const PIE_COLORS = ['#4F8EF7','#7C5CFC','#34D399','#FBBF24','#F87171'];
+
+const spendingData = [
+  {m:'Jan', income:8200, expense:5100}, {m:'Feb', income:8500, expense:4800},
+  {m:'Mar', income:7900, expense:5600}, {m:'Apr', income:9100, expense:4900},
+  {m:'May', income:8700, expense:5300}, {m:'Jun', income:9400, expense:6100},
+  {m:'Jul', income:8800, expense:5800}, {m:'Aug', income:9200, expense:5200},
+  {m:'Sep', income:9600, expense:4700}, {m:'Oct', income:8900, expense:5500},
+  {m:'Nov', income:9800, expense:6200}, {m:'Dec', income:10200, expense:6800},
+];
+
+const categoryData = [
+  {name:'Food & Dining',  value:28, amount:1568}, {name:'Housing',      value:35, amount:1960},
+  {name:'Transport',      value:12, amount:672},  {name:'Entertainment',value:15, amount:840},
+  {name:'Healthcare',     value:10, amount:560},
+];
+
+const transactions = [
+  {icon:'🍔', name:'Grab Food',     cat:'Food',      date:'Today, 12:45',  amount:-85000,  bg:'rgba(251,191,36,0.12)'},
+  {icon:'🏠', name:'Rent Payment',  cat:'Housing',   date:'Today, 09:00',  amount:-4200000,bg:'rgba(79,142,247,0.12)'},
+  {icon:'💰', name:'Salary',        cat:'Income',    date:'Yesterday',     amount:9200000, bg:'rgba(52,211,153,0.12)'},
+  {icon:'🚗', name:'Grab Car',      cat:'Transport', date:'Dec 24',        amount:-65000,  bg:'rgba(124,92,252,0.12)'},
+  {icon:'🎮', name:'Netflix',       cat:'Entertainment',date:'Dec 23',     amount:-130000, bg:'rgba(248,113,113,0.12)'},
+  {icon:'💊', name:'Pharmacy',      cat:'Healthcare',date:'Dec 22',        amount:-95000,  bg:'rgba(52,211,153,0.12)'},
+];
+
+const budgets = [
+  {name:'Food & Dining',   spent:1568, total:2000, color:'#FBBF24'},
+  {name:'Housing',         spent:1960, total:2000, color:'#4F8EF7'},
+  {name:'Transport',       spent:672,  total:800,  color:'#7C5CFC'},
+  {name:'Entertainment',   spent:840,  total:800,  color:'#F87171'},
+];
+
+const fmtVND = n => {
+  const abs = Math.abs(n);
+  const str = abs >= 1000000 ? (abs/1000000).toFixed(1)+'M' : abs >= 1000 ? (abs/1000).toFixed(0)+'K' : abs;
+  return (n < 0 ? '-' : '+') + str + ' ₫';
+};
+
+const NavIcon = ({name}) => {
+  const icons = {
+    dashboard: h('svg',{width:16,height:16,viewBox:'0 0 24 24',fill:'none',stroke:'currentColor',strokeWidth:2},h('rect',{x:3,y:3,width:7,height:7,rx:1}),h('rect',{x:14,y:3,width:7,height:7,rx:1}),h('rect',{x:3,y:14,width:7,height:7,rx:1}),h('rect',{x:14,y:14,width:7,height:7,rx:1})),
+    wallet:    h('svg',{width:16,height:16,viewBox:'0 0 24 24',fill:'none',stroke:'currentColor',strokeWidth:2},h('rect',{x:2,y:5,width:20,height:14,rx:2}),h('path',{d:'M16 13a1 1 0 1 0 2 0 1 1 0 0 0-2 0'})),
+    chart:     h('svg',{width:16,height:16,viewBox:'0 0 24 24',fill:'none',stroke:'currentColor',strokeWidth:2},h('path',{d:'M3 3v18h18'}),h('path',{d:'m7 16 4-4 4 4 4-4'})),
+    settings:  h('svg',{width:16,height:16,viewBox:'0 0 24 24',fill:'none',stroke:'currentColor',strokeWidth:2},h('circle',{cx:12,cy:12,r:3}),h('path',{d:'M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z'})),
+    tag:       h('svg',{width:16,height:16,viewBox:'0 0 24 24',fill:'none',stroke:'currentColor',strokeWidth:2},h('path',{d:'M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z'}),h('line',{x1:7,y1:7,x2:'7.01',y2:7})),
+  };
+  return icons[name] || null;
+};
+
+const CustomTooltip = ({active, payload, label}) => {
+  if(!active || !payload?.length) return null;
+  return h('div',{style:{background:'#1A1E2E',border:'1px solid rgba(255,255,255,0.1)',borderRadius:8,padding:'10px 14px',fontSize:12}},
+    h('p',{style:{color:'#7B82A3',marginBottom:6}}, label),
+    payload.map((p,i) => h('p',{key:i,style:{color:p.color,fontFamily:'DM Mono',marginBottom:2}}, `${p.name}: ${p.value.toLocaleString()} ₫`))
+  );
+};
+
+function App() {
+  const [activeNav, setActiveNav] = useState('dashboard');
+  const [month, setMonth] = useState('December 2025');
+
+  const now = new Date();
+  const totalBalance = 24680000;
+  const monthIncome = 9800000;
+  const monthExpense = 6200000;
+  const savings = monthIncome - monthExpense;
+  const savingsRate = Math.round((savings / monthIncome) * 100);
+
+  return h('div', {className:'layout'},
+    h('aside', {className:'sidebar'},
+      h('div', {className:'logo'},
+        h('div', {className:'logo-icon'}, 'F'),
+        h('span', {className:'logo-text'}, h('span', null, 'Fin'), 'Track')
+      ),
+      h('div', {className:'nav-label'}, 'Main'),
+      ['dashboard','wallet','chart','tag'].map(id =>
+        h('div', {key:id, className:`nav-item ${activeNav===id?'active':''}`, onClick:()=>setActiveNav(id)},
+          h(NavIcon, {name:id}),
+          {dashboard:'Dashboard',wallet:'Accounts',chart:'Analytics',tag:'Categories'}[id]
+        )
+      ),
+      h('div', {className:'nav-spacer'}),
+      h('div', {className:'nav-item', onClick:()=>setActiveNav('settings')}, h(NavIcon,{name:'settings'}), 'Settings'),
+      h('div', {className:'nav-user'},
+        h('div', {className:'avatar'}, 'DH'),
+        h('div', null,
+          h('div', {className:'user-name'}, 'Huy Hoang'),
+          h('div', {className:'user-role'}, 'Personal Account')
+        )
+      )
+    ),
+
+    h('main', {className:'main'},
+      h('div', {className:'topbar'},
+        h('span', {className:'page-title'}, 'Dashboard'),
+        h('div', {className:'topbar-right'},
+          h('select', {className:'month-select', value:month, onChange:e=>setMonth(e.target.value)},
+            MONTHS.map(m => h('option',{key:m}, `${m} 2025`))
+          ),
+          h('button', {className:'add-btn'}, '+ Add Transaction')
+        )
+      ),
+
+      h('div', {className:'content'},
+
+        h('div', {className:'stats-grid'},
+          h('div',{className:'stat-card'},
+            h('div',{className:'stat-header'},h('span',{className:'stat-label'},'Total Balance'),h('span',{className:'stat-badge badge-blue'},'Active')),
+            h('div',{className:'stat-value'}, totalBalance.toLocaleString()+' ₫'),
+            h('div',{className:'stat-sub'},'Across all accounts')
+          ),
+          h('div',{className:'stat-card'},
+            h('div',{className:'stat-header'},h('span',{className:'stat-label'},'Monthly Income'),h('span',{className:'stat-badge badge-green'},'+5.2%')),
+            h('div',{className:'stat-value'}, monthIncome.toLocaleString()+' ₫'),
+            h('div',{className:'stat-sub'},'vs 9,300,000 last month')
+          ),
+          h('div',{className:'stat-card'},
+            h('div',{className:'stat-header'},h('span',{className:'stat-label'},'Monthly Expenses'),h('span',{className:'stat-badge badge-red'},'+8.1%')),
+            h('div',{className:'stat-value'}, monthExpense.toLocaleString()+' ₫'),
+            h('div',{className:'stat-sub'},'vs 5,700,000 last month')
+          ),
+          h('div',{className:'stat-card'},
+            h('div',{className:'stat-header'},h('span',{className:'stat-label'},'Savings Rate'),h('span',{className:'stat-badge badge-green'},'Good')),
+            h('div',{className:'stat-value'}, savingsRate+'%'),
+            h('div',{className:'stat-sub'}, savings.toLocaleString()+' ₫ saved')
+          )
+        ),
+
+        h('div',{className:'charts-row'},
+          h('div',{className:'card'},
+            h('div',{className:'card-title'},'Income vs Expenses'),
+            h('div',{className:'card-sub'},'Full year overview 2025'),
+            h(ResponsiveContainer,{width:'100%',height:220},
+              h(AreaChart,{data:spendingData,margin:{top:5,right:5,bottom:0,left:0}},
+                h('defs',null,
+                  h('linearGradient',{id:'gIncome',x1:0,y1:0,x2:0,y2:1},
+                    h('stop',{offset:'5%',stopColor:'#4F8EF7',stopOpacity:0.3}),
+                    h('stop',{offset:'95%',stopColor:'#4F8EF7',stopOpacity:0})
+                  ),
+                  h('linearGradient',{id:'gExpense',x1:0,y1:0,x2:0,y2:1},
+                    h('stop',{offset:'5%',stopColor:'#F87171',stopOpacity:0.3}),
+                    h('stop',{offset:'95%',stopColor:'#F87171',stopOpacity:0})
+                  )
+                ),
+                h(CartesianGrid,{strokeDasharray:'3 3',stroke:'rgba(255,255,255,0.05)'}),
+                h(XAxis,{dataKey:'m',tick:{fill:'#7B82A3',fontSize:11},axisLine:false,tickLine:false}),
+                h(YAxis,{tick:{fill:'#7B82A3',fontSize:11},axisLine:false,tickLine:false,tickFormatter:v=>(v/1000)+'K',width:40}),
+                h(Tooltip,{content:h(CustomTooltip)}),
+                h(Area,{type:'monotone',dataKey:'income',name:'Income',stroke:'#4F8EF7',strokeWidth:2,fill:'url(#gIncome)'}),
+                h(Area,{type:'monotone',dataKey:'expense',name:'Expense',stroke:'#F87171',strokeWidth:2,fill:'url(#gExpense)'})
+              )
+            )
+          ),
+          h('div',{className:'card'},
+            h('div',{className:'card-title'},'Spending by Category'),
+            h('div',{className:'card-sub'},'This month'),
+            h(ResponsiveContainer,{width:'100%',height:160},
+              h(PieChart,null,
+                h(Pie,{data:categoryData,cx:'50%',cy:'50%',innerRadius:48,outerRadius:72,paddingAngle:3,dataKey:'value'},
+                  categoryData.map((_,i)=>h(Cell,{key:i,fill:PIE_COLORS[i]}))
+                )
+              )
+            ),
+            h('div',{className:'pie-legend'},
+              categoryData.map((cat,i)=>h('div',{key:i,className:'legend-item'},
+                h('div',{className:'legend-left'},
+                  h('div',{className:'legend-dot',style:{background:PIE_COLORS[i]}}),
+                  h('span',null, cat.name)
+                ),
+                h('span',{className:'legend-pct'}, cat.value+'%')
+              ))
+            )
+          )
+        ),
+
+        h('div',{className:'bottom-row'},
+          h('div',{className:'card'},
+            h('div',{className:'card-title'},'Recent Transactions'),
+            h('div',{className:'card-sub'},'Last 7 days'),
+            h('div',{className:'txn-list'},
+              transactions.map((t,i)=>h('div',{key:i,className:'txn-item'},
+                h('div',{className:'txn-icon',style:{background:t.bg}}, t.icon),
+                h('div',{className:'txn-info'},
+                  h('div',{className:'txn-name'},t.name),
+                  h('div',{className:'txn-date'},t.date)
+                ),
+                h('div',{className:'txn-amount',style:{color:t.amount<0?'#F87171':'#34D399'}}, fmtVND(t.amount))
+              ))
+            )
+          ),
+
+          h('div',{className:'card'},
+            h('div',{className:'card-title'},'Budget Tracker'),
+            h('div',{className:'card-sub'},'Monthly limits'),
+            h('div',{className:'budget-list'},
+              budgets.map((b,i)=>{
+                const pct = Math.min(Math.round((b.spent/b.total)*100),100);
+                const over = b.spent > b.total;
+                return h('div',{key:i,className:'budget-item'},
+                  h('div',{className:'budget-header'},
+                    h('span',{className:'budget-name'},b.name),
+                    h('span',{className:'budget-vals',style:{color:over?'#F87171':'#7B82A3'}},
+                      `$${b.spent.toLocaleString()} / $${b.total.toLocaleString()}`
+                    )
+                  ),
+                  h('div',{className:'budget-track'},
+                    h('div',{className:'budget-fill',style:{
+                      width:pct+'%', background: over?'#F87171':b.color, opacity: 0.9
+                    }})
+                  )
+                );
+              })
+            )
+          )
+        )
+      )
+    )
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(h(App));
+</script>
+</body>
+</html>
