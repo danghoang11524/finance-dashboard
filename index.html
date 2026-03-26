@@ -7,7 +7,6 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0C0E14;color:#F0F2FF;height:100vh;display:flex;overflow:hidden}
-/* SIDEBAR */
 .sidebar{width:210px;min-width:210px;background:#131620;border-right:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;padding:20px 0;height:100vh}
 .logo{padding:0 18px 24px;display:flex;align-items:center;gap:10px}
 .logo-icon{width:32px;height:32px;border-radius:8px;background:#4F8EF7;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff}
@@ -20,7 +19,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .nav-spacer{flex:1}
 .nav-user{padding:16px 18px;border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:10px}
 .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7C5CFC,#4F8EF7);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
-/* MAIN */
 .main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
 .topbar{padding:18px 24px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:space-between;background:#131620;position:sticky;top:0;z-index:10}
 .page-title{font-size:18px;font-weight:700;letter-spacing:-0.3px}
@@ -28,7 +26,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 select{background:#1A1E2E;border:1px solid rgba(255,255,255,0.12);color:#F0F2FF;padding:7px 12px;border-radius:8px;font-size:13px;cursor:pointer;outline:none}
 .add-btn{background:#4F8EF7;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
 .content{padding:20px 24px;display:flex;flex-direction:column;gap:18px}
-/* STAT CARDS */
+.page{display:none}
+.page.active{display:flex;flex-direction:column;gap:18px}
+/* CARDS */
+.card{background:#131620;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px}
+.card-title{font-size:14px;font-weight:600;margin-bottom:3px}
+.card-sub{font-size:11px;color:#7B82A3;margin-bottom:16px}
+/* STATS */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 .stat{background:#131620;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:16px 18px}
 .stat-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
@@ -37,36 +41,62 @@ select{background:#1A1E2E;border:1px solid rgba(255,255,255,0.12);color:#F0F2FF;
 .badge-green{background:rgba(52,211,153,0.15);color:#34D399}
 .badge-red{background:rgba(248,113,113,0.15);color:#F87171}
 .badge-blue{background:rgba(79,142,247,0.15);color:#4F8EF7}
-.stat-value{font-size:22px;font-weight:700;letter-spacing:-0.5px;margin-bottom:5px;font-variant-numeric:tabular-nums}
+.badge-purple{background:rgba(124,92,252,0.15);color:#7C5CFC}
+.stat-value{font-size:22px;font-weight:700;letter-spacing:-0.5px;margin-bottom:5px}
 .stat-sub{font-size:11px;color:#7B82A3}
-/* CHARTS ROW */
+/* GRID HELPERS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
 .charts-row{display:grid;grid-template-columns:1fr 320px;gap:14px}
-.card{background:#131620;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px}
-.card-title{font-size:14px;font-weight:600;margin-bottom:3px}
-.card-sub{font-size:11px;color:#7B82A3;margin-bottom:16px}
-/* BOTTOM */
 .bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 /* TRANSACTIONS */
 .txn{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:8px;cursor:pointer;transition:background .12s}
 .txn:hover{background:rgba(255,255,255,0.04)}
 .txn-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
 .txn-info{flex:1;min-width:0}
-.txn-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.txn-name{font-size:13px;font-weight:500}
 .txn-date{font-size:11px;color:#7B82A3;margin-top:2px}
 .txn-amount{font-size:13px;font-weight:700;white-space:nowrap}
 /* BUDGET */
 .budget-item{margin-bottom:16px}
 .budget-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
 .budget-name{font-size:13px;font-weight:500}
-.budget-vals{font-size:11px;color:#7B82A3;font-variant-numeric:tabular-nums}
+.budget-vals{font-size:11px;color:#7B82A3}
 .budget-track{height:6px;background:#1A1E2E;border-radius:99px;overflow:hidden}
-.budget-fill{height:100%;border-radius:99px;transition:width .8s ease}
+.budget-fill{height:100%;border-radius:99px}
 /* PIE LEGEND */
 .pie-legend{display:flex;flex-direction:column;gap:9px;margin-top:14px}
 .legend-row{display:flex;justify-content:space-between;align-items:center;font-size:12px}
 .legend-left{display:flex;align-items:center;gap:8px}
 .legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.legend-pct{color:#7B82A3;font-variant-numeric:tabular-nums}
+.legend-pct{color:#7B82A3}
+/* ACCOUNT CARDS */
+.account-card{background:#131620;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.account-card-header{display:flex;justify-content:space-between;align-items:flex-start}
+.account-type{font-size:11px;color:#7B82A3;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.account-name{font-size:15px;font-weight:600}
+.account-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.account-balance{font-size:24px;font-weight:700;letter-spacing:-0.5px}
+.account-footer{display:flex;justify-content:space-between;font-size:12px;color:#7B82A3;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06)}
+/* TABLE */
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;color:#7B82A3;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;padding:0 12px 12px;text-align:left}
+td{font-size:13px;padding:10px 12px;border-top:1px solid rgba(255,255,255,0.05)}
+tr:hover td{background:rgba(255,255,255,0.03)}
+/* CATEGORY CARDS */
+.cat-card{background:#131620;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.cat-header{display:flex;align-items:center;gap:12px}
+.cat-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.cat-name{font-size:14px;font-weight:600}
+.cat-count{font-size:11px;color:#7B82A3}
+.cat-amount{font-size:20px;font-weight:700}
+.cat-bar-track{height:5px;background:#1A1E2E;border-radius:99px;overflow:hidden}
+.cat-bar-fill{height:100%;border-radius:99px}
+/* ANALYTICS METRIC */
+.metric-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.metric-row:last-child{border-bottom:none}
+.metric-label{font-size:13px;color:#7B82A3}
+.metric-value{font-size:13px;font-weight:600}
 /* SCROLLBAR */
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -81,24 +111,24 @@ select{background:#1A1E2E;border:1px solid rgba(255,255,255,0.12);color:#F0F2FF;
     <span class="logo-text"><span>Fin</span>Track</span>
   </div>
   <div class="nav-label">Main</div>
-  <div class="nav-item active">
+  <div class="nav-item active" onclick="showPage('dashboard',this)">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
     Dashboard
   </div>
-  <div class="nav-item">
+  <div class="nav-item" onclick="showPage('accounts',this)">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M16 13a1 1 0 1 0 2 0 1 1 0 0 0-2 0"/></svg>
     Accounts
   </div>
-  <div class="nav-item">
+  <div class="nav-item" onclick="showPage('analytics',this)">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m7 16 4-4 4 4 4-4"/></svg>
     Analytics
   </div>
-  <div class="nav-item">
+  <div class="nav-item" onclick="showPage('categories',this)">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
     Categories
   </div>
   <div class="nav-spacer"></div>
-  <div class="nav-item">
+  <div class="nav-item" onclick="showPage('settings',this)">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     Settings
   </div>
@@ -113,141 +143,329 @@ select{background:#1A1E2E;border:1px solid rgba(255,255,255,0.12);color:#F0F2FF;
 
 <main class="main">
   <div class="topbar">
-    <span class="page-title">Dashboard</span>
+    <span class="page-title" id="topbar-title">Dashboard</span>
     <div class="topbar-right">
-      <select>
-        <option>December 2025</option>
-        <option>November 2025</option>
-        <option>October 2025</option>
-      </select>
-      <button class="add-btn">+ Add Transaction</button>
+      <select><option>December 2025</option><option>November 2025</option><option>October 2025</option></select>
+      <button class="add-btn" id="top-btn">+ Add Transaction</button>
     </div>
   </div>
 
   <div class="content">
-    <!-- STAT CARDS -->
-    <div class="stats">
-      <div class="stat">
-        <div class="stat-header"><span class="stat-label">Total Balance</span><span class="badge badge-blue">Active</span></div>
-        <div class="stat-value">24,680,000 ₫</div>
-        <div class="stat-sub">Across all accounts</div>
+
+    <!-- ==================== DASHBOARD ==================== -->
+    <div id="page-dashboard" class="page active">
+      <div class="stats">
+        <div class="stat"><div class="stat-header"><span class="stat-label">Total Balance</span><span class="badge badge-blue">Active</span></div><div class="stat-value">24,680,000 ₫</div><div class="stat-sub">Across all accounts</div></div>
+        <div class="stat"><div class="stat-header"><span class="stat-label">Monthly Income</span><span class="badge badge-green">+5.2%</span></div><div class="stat-value">9,800,000 ₫</div><div class="stat-sub">vs 9,300,000 last month</div></div>
+        <div class="stat"><div class="stat-header"><span class="stat-label">Expenses</span><span class="badge badge-red">+8.1%</span></div><div class="stat-value">6,200,000 ₫</div><div class="stat-sub">vs 5,700,000 last month</div></div>
+        <div class="stat"><div class="stat-header"><span class="stat-label">Savings Rate</span><span class="badge badge-green">Good</span></div><div class="stat-value">37%</div><div class="stat-sub">3,600,000 ₫ saved</div></div>
       </div>
-      <div class="stat">
-        <div class="stat-header"><span class="stat-label">Monthly Income</span><span class="badge badge-green">+5.2%</span></div>
-        <div class="stat-value">9,800,000 ₫</div>
-        <div class="stat-sub">vs 9,300,000 last month</div>
+      <div class="charts-row">
+        <div class="card">
+          <div class="card-title">Income vs Expenses</div>
+          <div class="card-sub">Full year overview 2025</div>
+          <svg width="100%" height="200" viewBox="0 0 560 200" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="gI" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4F8EF7" stop-opacity=".35"/><stop offset="100%" stop-color="#4F8EF7" stop-opacity="0"/></linearGradient>
+              <linearGradient id="gE" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F87171" stop-opacity=".35"/><stop offset="100%" stop-color="#F87171" stop-opacity="0"/></linearGradient>
+            </defs>
+            <line x1="0" y1="40" x2="560" y2="40" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+            <line x1="0" y1="90" x2="560" y2="90" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+            <line x1="0" y1="140" x2="560" y2="140" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+            <polygon points="0,110 47,100 93,115 140,85 187,95 233,75 280,88 327,80 373,68 420,85 467,62 513,50 560,35 560,180 0,180" fill="url(#gI)"/>
+            <polyline points="0,110 47,100 93,115 140,85 187,95 233,75 280,88 327,80 373,68 420,85 467,62 513,50 560,35" fill="none" stroke="#4F8EF7" stroke-width="2.5" stroke-linejoin="round"/>
+            <polygon points="0,130 47,125 93,133 140,120 187,127 233,135 280,128 327,122 373,118 420,126 467,138 513,132 560,140 560,180 0,180" fill="url(#gE)"/>
+            <polyline points="0,130 47,125 93,133 140,120 187,127 233,135 280,128 327,122 373,118 420,126 467,138 513,132 560,140" fill="none" stroke="#F87171" stroke-width="2.5" stroke-linejoin="round"/>
+            <text x="0" y="198" fill="#7B82A3" font-size="11" text-anchor="middle">Jan</text>
+            <text x="93" y="198" fill="#7B82A3" font-size="11" text-anchor="middle">Mar</text>
+            <text x="187" y="198" fill="#7B82A3" font-size="11" text-anchor="middle">May</text>
+            <text x="280" y="198" fill="#7B82A3" font-size="11" text-anchor="middle">Jul</text>
+            <text x="373" y="198" fill="#7B82A3" font-size="11" text-anchor="middle">Sep</text>
+            <text x="467" y="198" fill="#7B82A3" font-size="11" text-anchor="middle">Nov</text>
+            <circle cx="400" cy="16" r="5" fill="#4F8EF7"/><text x="410" y="20" fill="#7B82A3" font-size="11">Income</text>
+            <circle cx="470" cy="16" r="5" fill="#F87171"/><text x="480" y="20" fill="#7B82A3" font-size="11">Expense</text>
+          </svg>
+        </div>
+        <div class="card">
+          <div class="card-title">Spending by Category</div>
+          <div class="card-sub">This month breakdown</div>
+          <svg width="100%" height="140" viewBox="0 0 280 140">
+            <circle cx="80" cy="70" r="52" fill="none" stroke="#4F8EF7" stroke-width="22" stroke-dasharray="87 289" stroke-dashoffset="0"/>
+            <circle cx="80" cy="70" r="52" fill="none" stroke="#7C5CFC" stroke-width="22" stroke-dasharray="108 289" stroke-dashoffset="-87"/>
+            <circle cx="80" cy="70" r="52" fill="none" stroke="#34D399" stroke-width="22" stroke-dasharray="37 289" stroke-dashoffset="-195"/>
+            <circle cx="80" cy="70" r="52" fill="none" stroke="#FBBF24" stroke-width="22" stroke-dasharray="46 289" stroke-dashoffset="-232"/>
+            <circle cx="80" cy="70" r="52" fill="none" stroke="#F87171" stroke-width="22" stroke-dasharray="31 289" stroke-dashoffset="-278"/>
+            <circle cx="80" cy="70" r="38" fill="#131620"/>
+            <text x="80" y="66" fill="#F0F2FF" font-size="14" font-weight="700" text-anchor="middle">37%</text>
+            <text x="80" y="80" fill="#7B82A3" font-size="10" text-anchor="middle">Housing</text>
+          </svg>
+          <div class="pie-legend">
+            <div class="legend-row"><div class="legend-left"><div class="legend-dot" style="background:#4F8EF7"></div>Food & Dining</div><span class="legend-pct">28%</span></div>
+            <div class="legend-row"><div class="legend-left"><div class="legend-dot" style="background:#7C5CFC"></div>Housing</div><span class="legend-pct">37%</span></div>
+            <div class="legend-row"><div class="legend-left"><div class="legend-dot" style="background:#34D399"></div>Transport</div><span class="legend-pct">13%</span></div>
+            <div class="legend-row"><div class="legend-left"><div class="legend-dot" style="background:#FBBF24"></div>Entertainment</div><span class="legend-pct">16%</span></div>
+            <div class="legend-row"><div class="legend-left"><div class="legend-dot" style="background:#F87171"></div>Healthcare</div><span class="legend-pct">6%</span></div>
+          </div>
+        </div>
       </div>
-      <div class="stat">
-        <div class="stat-header"><span class="stat-label">Expenses</span><span class="badge badge-red">+8.1%</span></div>
-        <div class="stat-value">6,200,000 ₫</div>
-        <div class="stat-sub">vs 5,700,000 last month</div>
-      </div>
-      <div class="stat">
-        <div class="stat-header"><span class="stat-label">Savings Rate</span><span class="badge badge-green">Good</span></div>
-        <div class="stat-value">37%</div>
-        <div class="stat-sub">3,600,000 ₫ saved</div>
+      <div class="bottom-row">
+        <div class="card">
+          <div class="card-title">Recent Transactions</div>
+          <div class="card-sub">Last 7 days</div>
+          <div class="txn"><div class="txn-icon" style="background:rgba(251,191,36,.12)">🍔</div><div class="txn-info"><div class="txn-name">Grab Food</div><div class="txn-date">Today, 12:45</div></div><div class="txn-amount" style="color:#F87171">-85,000 ₫</div></div>
+          <div class="txn"><div class="txn-icon" style="background:rgba(79,142,247,.12)">🏠</div><div class="txn-info"><div class="txn-name">Rent Payment</div><div class="txn-date">Today, 09:00</div></div><div class="txn-amount" style="color:#F87171">-4,200,000 ₫</div></div>
+          <div class="txn"><div class="txn-icon" style="background:rgba(52,211,153,.12)">💰</div><div class="txn-info"><div class="txn-name">Salary</div><div class="txn-date">Yesterday</div></div><div class="txn-amount" style="color:#34D399">+9,200,000 ₫</div></div>
+          <div class="txn"><div class="txn-icon" style="background:rgba(124,92,252,.12)">🚗</div><div class="txn-info"><div class="txn-name">Grab Car</div><div class="txn-date">Dec 24</div></div><div class="txn-amount" style="color:#F87171">-65,000 ₫</div></div>
+          <div class="txn"><div class="txn-icon" style="background:rgba(248,113,113,.12)">🎮</div><div class="txn-info"><div class="txn-name">Netflix</div><div class="txn-date">Dec 23</div></div><div class="txn-amount" style="color:#F87171">-130,000 ₫</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Budget Tracker</div>
+          <div class="card-sub">Monthly limits</div>
+          <div class="budget-item"><div class="budget-header"><span class="budget-name">Food & Dining</span><span class="budget-vals">1,568K / 2,000K ₫</span></div><div class="budget-track"><div class="budget-fill" style="width:78%;background:#FBBF24"></div></div></div>
+          <div class="budget-item"><div class="budget-header"><span class="budget-name">Housing</span><span class="budget-vals">1,960K / 2,000K ₫</span></div><div class="budget-track"><div class="budget-fill" style="width:98%;background:#4F8EF7"></div></div></div>
+          <div class="budget-item"><div class="budget-header"><span class="budget-name">Transport</span><span class="budget-vals">672K / 800K ₫</span></div><div class="budget-track"><div class="budget-fill" style="width:84%;background:#7C5CFC"></div></div></div>
+          <div class="budget-item"><div class="budget-header"><span class="budget-name" style="color:#F87171">Entertainment ⚠</span><span class="budget-vals" style="color:#F87171">840K / 800K ₫</span></div><div class="budget-track"><div class="budget-fill" style="width:100%;background:#F87171"></div></div></div>
+          <div class="budget-item"><div class="budget-header"><span class="budget-name">Healthcare</span><span class="budget-vals">560K / 1,000K ₫</span></div><div class="budget-track"><div class="budget-fill" style="width:56%;background:#34D399"></div></div></div>
+        </div>
       </div>
     </div>
 
-    <!-- CHARTS ROW -->
-    <div class="charts-row">
+    <!-- ==================== ACCOUNTS ==================== -->
+    <div id="page-accounts" class="page">
+      <div class="grid-3">
+        <div class="account-card">
+          <div class="account-card-header">
+            <div><div class="account-type">Checking</div><div class="account-name">Main Account</div></div>
+            <div class="account-icon" style="background:rgba(79,142,247,0.12)">🏦</div>
+          </div>
+          <div class="account-balance" style="color:#4F8EF7">15,200,000 ₫</div>
+          <div class="account-footer"><span>VCB ****4521</span><span class="badge badge-green">Active</span></div>
+        </div>
+        <div class="account-card">
+          <div class="account-card-header">
+            <div><div class="account-type">Savings</div><div class="account-name">Emergency Fund</div></div>
+            <div class="account-icon" style="background:rgba(52,211,153,0.12)">💎</div>
+          </div>
+          <div class="account-balance" style="color:#34D399">8,480,000 ₫</div>
+          <div class="account-footer"><span>TCB ****8830</span><span class="badge badge-green">Active</span></div>
+        </div>
+        <div class="account-card">
+          <div class="account-card-header">
+            <div><div class="account-type">E-Wallet</div><div class="account-name">MoMo Wallet</div></div>
+            <div class="account-icon" style="background:rgba(248,113,113,0.12)">📱</div>
+          </div>
+          <div class="account-balance" style="color:#F87171">1,000,000 ₫</div>
+          <div class="account-footer"><span>0394 *** 892</span><span class="badge badge-blue">Active</span></div>
+        </div>
+      </div>
       <div class="card">
-        <div class="card-title">Income vs Expenses</div>
-        <div class="card-sub">Full year overview 2025</div>
-        <svg width="100%" height="200" viewBox="0 0 560 200" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="gI" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4F8EF7" stop-opacity=".35"/><stop offset="100%" stop-color="#4F8EF7" stop-opacity="0"/></linearGradient>
-            <linearGradient id="gE" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F87171" stop-opacity=".35"/><stop offset="100%" stop-color="#F87171" stop-opacity="0"/></linearGradient>
-          </defs>
-          <!-- Grid -->
-          <line x1="0" y1="40" x2="560" y2="40" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-          <line x1="0" y1="90" x2="560" y2="90" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-          <line x1="0" y1="140" x2="560" y2="140" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-          <!-- Income area -->
-          <polygon points="0,110 47,100 93,115 140,85 187,95 233,75 280,88 327,80 373,68 420,85 467,62 513,50 560,35 560,180 0,180" fill="url(#gI)"/>
-          <polyline points="0,110 47,100 93,115 140,85 187,95 233,75 280,88 327,80 373,68 420,85 467,62 513,50 560,35" fill="none" stroke="#4F8EF7" stroke-width="2.5" stroke-linejoin="round"/>
-          <!-- Expense area -->
-          <polygon points="0,130 47,125 93,133 140,120 187,127 233,135 280,128 327,122 373,118 420,126 467,138 513,132 560,140 560,180 0,180" fill="url(#gE)"/>
-          <polyline points="0,130 47,125 93,133 140,120 187,127 233,135 280,128 327,122 373,118 420,126 467,138 513,132 560,140" fill="none" stroke="#F87171" stroke-width="2.5" stroke-linejoin="round"/>
-          <!-- X labels -->
-          <text x="0"   y="198" fill="#7B82A3" font-size="11" text-anchor="middle">Jan</text>
-          <text x="93"  y="198" fill="#7B82A3" font-size="11" text-anchor="middle">Mar</text>
-          <text x="187" y="198" fill="#7B82A3" font-size="11" text-anchor="middle">May</text>
-          <text x="280" y="198" fill="#7B82A3" font-size="11" text-anchor="middle">Jul</text>
-          <text x="373" y="198" fill="#7B82A3" font-size="11" text-anchor="middle">Sep</text>
-          <text x="467" y="198" fill="#7B82A3" font-size="11" text-anchor="middle">Nov</text>
-          <!-- Legend -->
-          <circle cx="400" cy="16" r="5" fill="#4F8EF7"/>
-          <text x="410" y="20" fill="#7B82A3" font-size="11">Income</text>
-          <circle cx="470" cy="16" r="5" fill="#F87171"/>
-          <text x="480" y="20" fill="#7B82A3" font-size="11">Expense</text>
+        <div class="card-title">All Transactions</div>
+        <div class="card-sub">December 2025</div>
+        <table>
+          <thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Account</th><th style="text-align:right">Amount</th></tr></thead>
+          <tbody>
+            <tr><td style="color:#7B82A3">Dec 26</td><td>Grab Food</td><td><span class="badge badge-purple">Food</span></td><td>MoMo</td><td style="text-align:right;color:#F87171;font-weight:600">-85,000 ₫</td></tr>
+            <tr><td style="color:#7B82A3">Dec 26</td><td>Rent Payment</td><td><span class="badge badge-blue">Housing</span></td><td>VCB</td><td style="text-align:right;color:#F87171;font-weight:600">-4,200,000 ₫</td></tr>
+            <tr><td style="color:#7B82A3">Dec 25</td><td>Salary December</td><td><span class="badge badge-green">Income</span></td><td>VCB</td><td style="text-align:right;color:#34D399;font-weight:600">+9,200,000 ₫</td></tr>
+            <tr><td style="color:#7B82A3">Dec 24</td><td>Grab Car</td><td><span class="badge badge-purple">Transport</span></td><td>MoMo</td><td style="text-align:right;color:#F87171;font-weight:600">-65,000 ₫</td></tr>
+            <tr><td style="color:#7B82A3">Dec 23</td><td>Netflix</td><td><span class="badge badge-red">Entertainment</span></td><td>VCB</td><td style="text-align:right;color:#F87171;font-weight:600">-130,000 ₫</td></tr>
+            <tr><td style="color:#7B82A3">Dec 22</td><td>Pharmacy</td><td><span class="badge badge-green">Healthcare</span></td><td>VCB</td><td style="text-align:right;color:#F87171;font-weight:600">-95,000 ₫</td></tr>
+            <tr><td style="color:#7B82A3">Dec 20</td><td>Circle K</td><td><span class="badge badge-purple">Food</span></td><td>MoMo</td><td style="text-align:right;color:#F87171;font-weight:600">-45,000 ₫</td></tr>
+            <tr><td style="color:#7B82A3">Dec 18</td><td>Savings Transfer</td><td><span class="badge badge-blue">Savings</span></td><td>TCB</td><td style="text-align:right;color:#34D399;font-weight:600">+2,000,000 ₫</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ==================== ANALYTICS ==================== -->
+    <div id="page-analytics" class="page">
+      <div class="stats">
+        <div class="stat"><div class="stat-header"><span class="stat-label">Avg Monthly Spend</span><span class="badge badge-blue">2025</span></div><div class="stat-value">5,475,000 ₫</div><div class="stat-sub">Based on 12 months</div></div>
+        <div class="stat"><div class="stat-header"><span class="stat-label">Total Saved</span><span class="badge badge-green">+12%</span></div><div class="stat-value">38,400,000 ₫</div><div class="stat-sub">This year</div></div>
+        <div class="stat"><div class="stat-header"><span class="stat-label">Biggest Expense</span><span class="badge badge-red">Housing</span></div><div class="stat-value">37%</div><div class="stat-sub">Of total spending</div></div>
+        <div class="stat"><div class="stat-header"><span class="stat-label">Net Worth</span><span class="badge badge-green">Growing</span></div><div class="stat-value">24,680,000 ₫</div><div class="stat-sub">+3,600,000 this month</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Monthly Spending Trend</div>
+          <div class="card-sub">Expense comparison by month</div>
+          <svg width="100%" height="200" viewBox="0 0 500 200">
+            <defs><linearGradient id="gBar" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#7C5CFC" stop-opacity=".9"/><stop offset="100%" stop-color="#4F8EF7" stop-opacity=".7"/></linearGradient></defs>
+            <line x1="0" y1="160" x2="500" y2="160" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+            <line x1="0" y1="120" x2="500" y2="120" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+            <line x1="0" y1="80" x2="500" y2="80" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+            <rect x="5"   y="105" width="28" height="55" rx="4" fill="url(#gBar)"/>
+            <rect x="47"  y="98"  width="28" height="62" rx="4" fill="url(#gBar)"/>
+            <rect x="89"  y="110" width="28" height="50" rx="4" fill="url(#gBar)"/>
+            <rect x="131" y="95"  width="28" height="65" rx="4" fill="url(#gBar)"/>
+            <rect x="173" y="102" width="28" height="58" rx="4" fill="url(#gBar)"/>
+            <rect x="215" y="115" width="28" height="45" rx="4" fill="url(#gBar)"/>
+            <rect x="257" y="108" width="28" height="52" rx="4" fill="url(#gBar)"/>
+            <rect x="299" y="100" width="28" height="60" rx="4" fill="url(#gBar)"/>
+            <rect x="341" y="92"  width="28" height="68" rx="4" fill="url(#gBar)"/>
+            <rect x="383" y="107" width="28" height="53" rx="4" fill="url(#gBar)"/>
+            <rect x="425" y="118" width="28" height="42" rx="4" fill="url(#gBar)"/>
+            <rect x="467" y="88"  width="28" height="72" rx="4" fill="#F87171" opacity=".85"/>
+            <text x="19"  y="185" fill="#7B82A3" font-size="9" text-anchor="middle">J</text>
+            <text x="61"  y="185" fill="#7B82A3" font-size="9" text-anchor="middle">F</text>
+            <text x="103" y="185" fill="#7B82A3" font-size="9" text-anchor="middle">M</text>
+            <text x="145" y="185" fill="#7B82A3" font-size="9" text-anchor="middle">A</text>
+            <text x="187" y="185" fill="#7B82A3" font-size="9" text-anchor="middle">M</text>
+            <text x="229" y="185" fill="#7B82A3" font-size="9" text-anchor="middle">J</text>
+            <text x="271" y="185" fill="#7B82A3" font-size="9" text-anchor="middle">J</text>
+            <text x="313" y="185" fill="#7B82A3" font-size="9" text-anchor="middle">A</text>
+            <text x="355" y="185" fill="#7B82A3" font-size="9" text-anchor="middle">S</text>
+            <text x="397" y="185" fill="#7B82A3" font-size="9" text-anchor="middle">O</text>
+            <text x="439" y="185" fill="#7B82A3" font-size="9" text-anchor="middle">N</text>
+            <text x="481" y="185" fill="#F87171" font-size="9" text-anchor="middle" font-weight="700">D</text>
+          </svg>
+        </div>
+        <div class="card">
+          <div class="card-title">Key Metrics</div>
+          <div class="card-sub">Financial health indicators</div>
+          <div class="metric-row"><span class="metric-label">Income Growth (YoY)</span><span class="metric-value" style="color:#34D399">+15.2%</span></div>
+          <div class="metric-row"><span class="metric-label">Expense Growth (YoY)</span><span class="metric-value" style="color:#F87171">+8.4%</span></div>
+          <div class="metric-row"><span class="metric-label">Savings Rate</span><span class="metric-value" style="color:#34D399">37%</span></div>
+          <div class="metric-row"><span class="metric-label">Debt-to-Income</span><span class="metric-value" style="color:#FBBF24">0%</span></div>
+          <div class="metric-row"><span class="metric-label">Emergency Fund</span><span class="metric-value" style="color:#34D399">8,480,000 ₫</span></div>
+          <div class="metric-row"><span class="metric-label">Largest Transaction</span><span class="metric-value">9,200,000 ₫</span></div>
+          <div class="metric-row"><span class="metric-label">Avg Daily Spend</span><span class="metric-value">206,000 ₫</span></div>
+          <div class="metric-row"><span class="metric-label">Most Expensive Month</span><span class="metric-value" style="color:#F87171">December</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Income vs Expense by Quarter</div>
+        <div class="card-sub">Q1 – Q4 comparison 2025</div>
+        <svg width="100%" height="140" viewBox="0 0 560 140">
+          <text x="70"  y="130" fill="#7B82A3" font-size="11" text-anchor="middle">Q1 (Jan–Mar)</text>
+          <text x="210" y="130" fill="#7B82A3" font-size="11" text-anchor="middle">Q2 (Apr–Jun)</text>
+          <text x="350" y="130" fill="#7B82A3" font-size="11" text-anchor="middle">Q3 (Jul–Sep)</text>
+          <text x="490" y="130" fill="#7B82A3" font-size="11" text-anchor="middle">Q4 (Oct–Dec)</text>
+          <!-- Q1 -->
+          <rect x="30"  y="30" width="36" height="85" rx="4" fill="#4F8EF7" opacity=".8"/>
+          <rect x="74"  y="55" width="36" height="60" rx="4" fill="#F87171" opacity=".8"/>
+          <!-- Q2 -->
+          <rect x="170" y="22" width="36" height="93" rx="4" fill="#4F8EF7" opacity=".8"/>
+          <rect x="214" y="48" width="36" height="67" rx="4" fill="#F87171" opacity=".8"/>
+          <!-- Q3 -->
+          <rect x="310" y="18" width="36" height="97" rx="4" fill="#4F8EF7" opacity=".8"/>
+          <rect x="354" y="44" width="36" height="71" rx="4" fill="#F87171" opacity=".8"/>
+          <!-- Q4 -->
+          <rect x="450" y="10" width="36" height="105" rx="4" fill="#4F8EF7" opacity=".8"/>
+          <rect x="494" y="32" width="36" height="83" rx="4" fill="#F87171" opacity=".8"/>
+          <!-- legend -->
+          <rect x="10" y="5" width="10" height="10" rx="2" fill="#4F8EF7"/>
+          <text x="24" y="14" fill="#7B82A3" font-size="10">Income</text>
+          <rect x="75" y="5" width="10" height="10" rx="2" fill="#F87171"/>
+          <text x="89" y="14" fill="#7B82A3" font-size="10">Expense</text>
         </svg>
       </div>
+    </div>
 
+    <!-- ==================== CATEGORIES ==================== -->
+    <div id="page-categories" class="page">
+      <div class="grid-3">
+        <div class="cat-card">
+          <div class="cat-header"><div class="cat-icon" style="background:rgba(251,191,36,.12)">🍔</div><div><div class="cat-name">Food & Dining</div><div class="cat-count">24 transactions</div></div></div>
+          <div class="cat-amount" style="color:#FBBF24">1,568,000 ₫</div>
+          <div class="cat-bar-track"><div class="cat-bar-fill" style="width:78%;background:#FBBF24"></div></div>
+          <div style="font-size:11px;color:#7B82A3;display:flex;justify-content:space-between"><span>78% of budget</span><span>Budget: 2,000,000 ₫</span></div>
+        </div>
+        <div class="cat-card">
+          <div class="cat-header"><div class="cat-icon" style="background:rgba(79,142,247,.12)">🏠</div><div><div class="cat-name">Housing</div><div class="cat-count">3 transactions</div></div></div>
+          <div class="cat-amount" style="color:#4F8EF7">1,960,000 ₫</div>
+          <div class="cat-bar-track"><div class="cat-bar-fill" style="width:98%;background:#4F8EF7"></div></div>
+          <div style="font-size:11px;color:#7B82A3;display:flex;justify-content:space-between"><span>98% of budget</span><span>Budget: 2,000,000 ₫</span></div>
+        </div>
+        <div class="cat-card">
+          <div class="cat-header"><div class="cat-icon" style="background:rgba(124,92,252,.12)">🚗</div><div><div class="cat-name">Transport</div><div class="cat-count">18 transactions</div></div></div>
+          <div class="cat-amount" style="color:#7C5CFC">672,000 ₫</div>
+          <div class="cat-bar-track"><div class="cat-bar-fill" style="width:84%;background:#7C5CFC"></div></div>
+          <div style="font-size:11px;color:#7B82A3;display:flex;justify-content:space-between"><span>84% of budget</span><span>Budget: 800,000 ₫</span></div>
+        </div>
+        <div class="cat-card">
+          <div class="cat-header"><div class="cat-icon" style="background:rgba(248,113,113,.12)">🎮</div><div><div class="cat-name">Entertainment</div><div class="cat-count">7 transactions</div></div></div>
+          <div class="cat-amount" style="color:#F87171">840,000 ₫</div>
+          <div class="cat-bar-track"><div class="cat-bar-fill" style="width:100%;background:#F87171"></div></div>
+          <div style="font-size:11px;color:#F87171;display:flex;justify-content:space-between"><span>⚠ Over budget!</span><span>Budget: 800,000 ₫</span></div>
+        </div>
+        <div class="cat-card">
+          <div class="cat-header"><div class="cat-icon" style="background:rgba(52,211,153,.12)">💊</div><div><div class="cat-name">Healthcare</div><div class="cat-count">5 transactions</div></div></div>
+          <div class="cat-amount" style="color:#34D399">560,000 ₫</div>
+          <div class="cat-bar-track"><div class="cat-bar-fill" style="width:56%;background:#34D399"></div></div>
+          <div style="font-size:11px;color:#7B82A3;display:flex;justify-content:space-between"><span>56% of budget</span><span>Budget: 1,000,000 ₫</span></div>
+        </div>
+        <div class="cat-card">
+          <div class="cat-header"><div class="cat-icon" style="background:rgba(79,142,247,.12)">📚</div><div><div class="cat-name">Education</div><div class="cat-count">2 transactions</div></div></div>
+          <div class="cat-amount" style="color:#4F8EF7">300,000 ₫</div>
+          <div class="cat-bar-track"><div class="cat-bar-fill" style="width:30%;background:#4F8EF7"></div></div>
+          <div style="font-size:11px;color:#7B82A3;display:flex;justify-content:space-between"><span>30% of budget</span><span>Budget: 1,000,000 ₫</span></div>
+        </div>
+      </div>
       <div class="card">
-        <div class="card-title">Spending by Category</div>
-        <div class="card-sub">This month breakdown</div>
-        <svg width="100%" height="140" viewBox="0 0 280 140">
-          <!-- Donut chart manually drawn -->
-          <circle cx="80" cy="70" r="52" fill="none" stroke="#4F8EF7" stroke-width="22" stroke-dasharray="87 289" stroke-dashoffset="0"/>
-          <circle cx="80" cy="70" r="52" fill="none" stroke="#7C5CFC" stroke-width="22" stroke-dasharray="108 289" stroke-dashoffset="-87"/>
-          <circle cx="80" cy="70" r="52" fill="none" stroke="#34D399" stroke-width="22" stroke-dasharray="37 289" stroke-dashoffset="-195"/>
-          <circle cx="80" cy="70" r="52" fill="none" stroke="#FBBF24" stroke-width="22" stroke-dasharray="46 289" stroke-dashoffset="-232"/>
-          <circle cx="80" cy="70" r="52" fill="none" stroke="#F87171" stroke-width="22" stroke-dasharray="31 289" stroke-dashoffset="-278"/>
-          <circle cx="80" cy="70" r="38" fill="#131620"/>
-          <text x="80" y="66" fill="#F0F2FF" font-size="14" font-weight="700" text-anchor="middle">37%</text>
-          <text x="80" y="80" fill="#7B82A3" font-size="10" text-anchor="middle">Housing</text>
-        </svg>
-        <div class="pie-legend">
-          <div class="legend-row"><div class="legend-left"><div class="legend-dot" style="background:#4F8EF7"></div>Food & Dining</div><span class="legend-pct">28%</span></div>
-          <div class="legend-row"><div class="legend-left"><div class="legend-dot" style="background:#7C5CFC"></div>Housing</div><span class="legend-pct">37%</span></div>
-          <div class="legend-row"><div class="legend-left"><div class="legend-dot" style="background:#34D399"></div>Transport</div><span class="legend-pct">13%</span></div>
-          <div class="legend-row"><div class="legend-left"><div class="legend-dot" style="background:#FBBF24"></div>Entertainment</div><span class="legend-pct">16%</span></div>
-          <div class="legend-row"><div class="legend-left"><div class="legend-dot" style="background:#F87171"></div>Healthcare</div><span class="legend-pct">6%</span></div>
+        <div class="card-title">Category Summary</div>
+        <div class="card-sub">Total spending by category this month</div>
+        <table>
+          <thead><tr><th>Category</th><th>Transactions</th><th>Budget</th><th>Spent</th><th style="text-align:right">Status</th></tr></thead>
+          <tbody>
+            <tr><td>🍔 Food & Dining</td><td style="color:#7B82A3">24</td><td style="color:#7B82A3">2,000,000 ₫</td><td style="font-weight:600">1,568,000 ₫</td><td style="text-align:right"><span class="badge badge-green">On track</span></td></tr>
+            <tr><td>🏠 Housing</td><td style="color:#7B82A3">3</td><td style="color:#7B82A3">2,000,000 ₫</td><td style="font-weight:600">1,960,000 ₫</td><td style="text-align:right"><span class="badge" style="background:rgba(251,191,36,.15);color:#FBBF24">Near limit</span></td></tr>
+            <tr><td>🚗 Transport</td><td style="color:#7B82A3">18</td><td style="color:#7B82A3">800,000 ₫</td><td style="font-weight:600">672,000 ₫</td><td style="text-align:right"><span class="badge badge-green">On track</span></td></tr>
+            <tr><td>🎮 Entertainment</td><td style="color:#7B82A3">7</td><td style="color:#7B82A3">800,000 ₫</td><td style="font-weight:600;color:#F87171">840,000 ₫</td><td style="text-align:right"><span class="badge badge-red">Over budget</span></td></tr>
+            <tr><td>💊 Healthcare</td><td style="color:#7B82A3">5</td><td style="color:#7B82A3">1,000,000 ₫</td><td style="font-weight:600">560,000 ₫</td><td style="text-align:right"><span class="badge badge-green">On track</span></td></tr>
+            <tr><td>📚 Education</td><td style="color:#7B82A3">2</td><td style="color:#7B82A3">1,000,000 ₫</td><td style="font-weight:600">300,000 ₫</td><td style="text-align:right"><span class="badge badge-green">On track</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ==================== SETTINGS ==================== -->
+    <div id="page-settings" class="page">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Profile</div>
+          <div class="card-sub">Personal information</div>
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+            <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#7C5CFC,#4F8EF7);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff">DH</div>
+            <div><div style="font-size:16px;font-weight:600">Dang Phuoc Huy Hoang</div><div style="font-size:12px;color:#7B82A3;margin-top:2px">danghoang11524@gmail.com</div></div>
+          </div>
+          <div class="metric-row"><span class="metric-label">Phone</span><span class="metric-value">0394 443 892</span></div>
+          <div class="metric-row"><span class="metric-label">Location</span><span class="metric-value">Ho Chi Minh City, VN</span></div>
+          <div class="metric-row"><span class="metric-label">Currency</span><span class="metric-value">VND (₫)</span></div>
+          <div class="metric-row"><span class="metric-label">Member Since</span><span class="metric-value">January 2025</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Preferences</div>
+          <div class="card-sub">App settings</div>
+          <div class="metric-row"><span class="metric-label">Theme</span><span class="metric-value"><span class="badge badge-blue">Dark Mode</span></span></div>
+          <div class="metric-row"><span class="metric-label">Language</span><span class="metric-value">English</span></div>
+          <div class="metric-row"><span class="metric-label">Notifications</span><span class="metric-value" style="color:#34D399">Enabled</span></div>
+          <div class="metric-row"><span class="metric-label">Budget Alerts</span><span class="metric-value" style="color:#34D399">Enabled</span></div>
+          <div class="metric-row"><span class="metric-label">Monthly Report</span><span class="metric-value" style="color:#34D399">Auto-send</span></div>
+          <div class="metric-row"><span class="metric-label">Data Export</span><span class="metric-value"><span class="badge badge-purple">CSV / PDF</span></span></div>
         </div>
       </div>
     </div>
 
-    <!-- BOTTOM ROW -->
-    <div class="bottom-row">
-      <div class="card">
-        <div class="card-title">Recent Transactions</div>
-        <div class="card-sub">Last 7 days</div>
-        <div class="txn"><div class="txn-icon" style="background:rgba(251,191,36,.12)">🍔</div><div class="txn-info"><div class="txn-name">Grab Food</div><div class="txn-date">Today, 12:45</div></div><div class="txn-amount" style="color:#F87171">-85,000 ₫</div></div>
-        <div class="txn"><div class="txn-icon" style="background:rgba(79,142,247,.12)">🏠</div><div class="txn-info"><div class="txn-name">Rent Payment</div><div class="txn-date">Today, 09:00</div></div><div class="txn-amount" style="color:#F87171">-4,200,000 ₫</div></div>
-        <div class="txn"><div class="txn-icon" style="background:rgba(52,211,153,.12)">💰</div><div class="txn-info"><div class="txn-name">Salary</div><div class="txn-date">Yesterday</div></div><div class="txn-amount" style="color:#34D399">+9,200,000 ₫</div></div>
-        <div class="txn"><div class="txn-icon" style="background:rgba(124,92,252,.12)">🚗</div><div class="txn-info"><div class="txn-name">Grab Car</div><div class="txn-date">Dec 24</div></div><div class="txn-amount" style="color:#F87171">-65,000 ₫</div></div>
-        <div class="txn"><div class="txn-icon" style="background:rgba(248,113,113,.12)">🎮</div><div class="txn-info"><div class="txn-name">Netflix</div><div class="txn-date">Dec 23</div></div><div class="txn-amount" style="color:#F87171">-130,000 ₫</div></div>
-        <div class="txn"><div class="txn-icon" style="background:rgba(52,211,153,.12)">💊</div><div class="txn-info"><div class="txn-name">Pharmacy</div><div class="txn-date">Dec 22</div></div><div class="txn-amount" style="color:#F87171">-95,000 ₫</div></div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Budget Tracker</div>
-        <div class="card-sub">Monthly limits</div>
-        <div class="budget-item">
-          <div class="budget-header"><span class="budget-name">Food & Dining</span><span class="budget-vals">1,568K / 2,000K ₫</span></div>
-          <div class="budget-track"><div class="budget-fill" style="width:78%;background:#FBBF24"></div></div>
-        </div>
-        <div class="budget-item">
-          <div class="budget-header"><span class="budget-name">Housing</span><span class="budget-vals">1,960K / 2,000K ₫</span></div>
-          <div class="budget-track"><div class="budget-fill" style="width:98%;background:#4F8EF7"></div></div>
-        </div>
-        <div class="budget-item">
-          <div class="budget-header"><span class="budget-name">Transport</span><span class="budget-vals">672K / 800K ₫</span></div>
-          <div class="budget-track"><div class="budget-fill" style="width:84%;background:#7C5CFC"></div></div>
-        </div>
-        <div class="budget-item">
-          <div class="budget-header"><span class="budget-name" style="color:#F87171">Entertainment ⚠</span><span class="budget-vals" style="color:#F87171">840K / 800K ₫</span></div>
-          <div class="budget-track"><div class="budget-fill" style="width:100%;background:#F87171"></div></div>
-        </div>
-        <div class="budget-item">
-          <div class="budget-header"><span class="budget-name">Healthcare</span><span class="budget-vals">560K / 1,000K ₫</span></div>
-          <div class="budget-track"><div class="budget-fill" style="width:56%;background:#34D399"></div></div>
-        </div>
-      </div>
-    </div>
   </div>
 </main>
 
+<script>
+const pages = {
+  dashboard: {title:'Dashboard', btn:'+ Add Transaction'},
+  accounts:  {title:'Accounts',  btn:'+ Add Account'},
+  analytics: {title:'Analytics', btn:'Export Report'},
+  categories:{title:'Categories',btn:'+ Add Category'},
+  settings:  {title:'Settings',  btn:'Save Changes'},
+};
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  el.classList.add('active');
+  document.getElementById('topbar-title').textContent = pages[id].title;
+  document.getElementById('top-btn').textContent = pages[id].btn;
+}
+</script>
 </body>
 </html>
